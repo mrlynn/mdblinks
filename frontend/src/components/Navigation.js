@@ -1,19 +1,15 @@
-import { SideNav, SideNavGroup, SideNavItem } from '@leafygreen-ui/side-nav';
+import { SideNav, SideNavItem } from '@leafygreen-ui/side-nav';
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function Navigation ({ className }) {
+  const location = useLocation();
+
   return (
-    <SideNav className={className}>
-      <SideNavItem as={Link} active to="/">Home</SideNavItem>
-      <SideNavItem as={Link} to="/page1">Page 1</SideNavItem>
-      <SideNavGroup header="Other stuff" collapsible>
-        <SideNavItem >
-          Stuff 1
-        </SideNavItem>
-        <SideNavItem>
-          Stuff 2
-        </SideNavItem>
-      </SideNavGroup>
+    <SideNav aria-label="Navigation Bar" className={className}>
+      <SideNavItem aria-label="Home" as={Link} active={location.pathname === "/"} to="/">Home</SideNavItem>
+      <SideNavItem aria-label="Short URLs" as={Link} active={location.pathname === "/app/routes"} to="/app/routes">Short URLs</SideNavItem>
+      <SideNavItem aria-label="Dashboard" as={Link} active={location.pathname === "/app/stats"} to="/app/stats">Dashboard</SideNavItem>
     </SideNav>
   );
 }

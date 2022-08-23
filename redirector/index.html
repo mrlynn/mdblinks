@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Joel Lord">
+  <meta name="image" content="https://www.mongodb.com/docs/assets/meta_generic.png">
+
+  <title>MDB.link redirector</title>
+</head>
+
+<body id="page-top" style="display:none">
+
+  <h1>Oops, that URL was not found</h1>
+  <p>Did you mean to visit any of these sites?</p>
+  <ul id="routeList">
+  </ul>
+
+</body>
+
+<script src="https://unpkg.com/realm-web/dist/bundle.iife.js"></script>
+<script type="text/javascript">
+
+const app = new Realm.App({ id: "redirector-odhgb" });
+const credentials = Realm.Credentials.anonymous();
+
+const main = async () => {
+  const user = await app.logIn(credentials);
+  const route = location.pathname;
+  const routeDetails = await user.functions.getRouteDetails(route);
+  if (routeDetails?.match) {
+    console.log(routeDetails);
+
+    let og = {
+      type: "website",
+      url: `https://mdb.link${route}`,
+      title: routeDetails.title,
+      description: routeDetails.description,
+      image: "https://www.mongodb.com/docs/assets/meta_generic.png"
+    }
+
+    let ogMetaTags = Object.keys(og).map(key => {
+      let tag = document.createElement("meta");
+      tag.setAttribute("property", `og:${key}`);
+      tag.setAttribute("content", og[key]);
+      
+      document.querySelector("head").append(tag);
+    });
+
+    let twitter = {
+      card: "summary_large_image",
+      domain: "mdb.link",
+      site: "@mongodb",      
+      url: `https://mdb.link${route}`,
+      title: routeDetails.title,
+      description: routeDetails.description,
+      image: "https://www.mongodb.com/docs/assets/meta_generic.png"
+    }
+
+    let twMetaTags = Object.keys(twitter).map(key => {
+      let tag = document.createElement("meta");
+      tag.setAttribute("property", `twitter:${key}`);
+      tag.setAttribute("content", twitter[key]);
+      document.querySelector("head").append(tag);
+    });
+
+
+    setTimeout(() => {
+      location.replace(routeDetails.to);
+    }, 0);
+
+  } else {
+    routeDetails.map(r => {
+      let a = document.createElement("a");
+      a.innerText = r.title || r.route;
+      a.setAttribute("href", r.to);
+      a.addEventListener("click", async e => {
+        e.preventDefault();
+        await user.functions.storeTypo(route, r.route);
+        location.href = r.to;
+      });
+      let li = document.createElement("li");
+      li.appendChild(a);
+      let ul = document.querySelector("#routeList");
+      ul.append(li);
+    });
+    document.querySelector("body").style = "display:visible";
+  }
+}
+
+main();
+
+
+</script>
+
+</html>
