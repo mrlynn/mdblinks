@@ -1,12 +1,12 @@
 const settings = {
   AUTH0: {
-    domain: "mdb-atlas.us.auth0.com",
-    clientId: "apIOBnUT0iCdOhcBPdTFjImPe84JEv6f",
+    domain: process.env.AUTH0_DOMAIN,
+    clientId: process.env.AUTH0_CLIENTID,
     redirectUri: `${window.location.origin}`,
-    audience: "mdb-atlas"
+    audience: process.env.AUTH0_AUDIENCE
   },
   REALM: {
-    appId: "admin-toxzg"
+    appId: process.env.REALM_APP_ID
   }
 }
 
