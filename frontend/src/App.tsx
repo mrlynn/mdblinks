@@ -14,6 +14,7 @@ import settings from "./config";
 import Home from "./pages/Home";
 import Shorties from "./pages/Shorties";
 import Login from "./pages/Login";
+import Logout from "./pages/Logout";
 import Stats from "./pages/Stats";
 
 import { RealmProvider } from "./providers/Realm";
@@ -31,6 +32,7 @@ function App() {
           <Router>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/logout" element={<Logout />} />
               <Route path="/" element={<Layout />}>
                 <Route path="app" element={<PrivateOutlet />}>
                   <Route path="routes" element={<Shorties />} />
