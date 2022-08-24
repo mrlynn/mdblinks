@@ -1,6 +1,12 @@
 [
     {
-        "name": "getAllRoutes",
+        "name": "getRouteStats",
+        "private": false,
+        "run_as_system": true,
+        "disable_arg_logs": true
+    },
+    {
+        "name": "insertRoute",
         "private": false,
         "disable_arg_logs": true
     },
@@ -10,14 +16,8 @@
         "disable_arg_logs": true
     },
     {
-        "name": "insertRoute",
+        "name": "getAllRoutes",
         "private": false,
-        "disable_arg_logs": true
-    },
-    {
-        "name": "getRouteStats",
-        "private": false,
-        "run_as_system": true,
         "disable_arg_logs": true
     }
 ]
