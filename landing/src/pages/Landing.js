@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { css } from "@leafygreen-ui/emotion";
 import { MongoDBLogo } from "@leafygreen-ui/logo";
-import { H1, H2, H3, Body } from "@leafygreen-ui/typography";
+import { H1, H2, Body } from "@leafygreen-ui/typography";
 import Button from "@leafygreen-ui/button";
 import ReactMarkdown from 'react-markdown'
 
