@@ -1,12 +1,33 @@
-# mkdir realm
-# cd realm
-# realm-cli pull --remote=admin-toxzg --include-hosting
-# mv admin/* . && rm -r admin
-# cd frontend
-# npm run build
-# cd ..
-# rm -rf ./hosting/files
-# cp -r ./frontend/build ./hosting/files
-# git add .
-# git commit -am $1
-# git push origin main
+echo "Deploying redirector service"
+realm-cli pull --local=realm --remote=redirector-odhgb --include-hosting -y
+rm -rf ./realm/hosting/files
+mkdir ./realm/hosting/files
+cd redirector
+cp -r . ../realm/hosting/files
+cd ..
+realm-cli push --local=realm --remote=redirector-odhgb --include-hosting -y
+rm -rf ./realm
+
+echo "Deploying admin interface"
+realm-cli pull --local=realm --remote=admin-toxzg --include-hosting -y
+rm -rf ./realm/hosting/files
+mkdir ./realm/hosting/files
+cd admin
+npm run build
+cp -r ./build/* ../realm/hosting/files
+rm -rf ./build
+cd ..
+realm-cli push --local=realm --remote=admin-toxzg --include-hosting -y
+rm -rf ./realm
+
+echo "Deploying landing page service"
+realm-cli pull --local=realm --remote=landing-mgxlk --include-hosting -y
+rm -rf ./realm/hosting/files
+mkdir ./realm/hosting/files
+cd landing
+npm run build
+cp -r ./build/* ../realm/hosting/files
+rm -rf ./build
+cd ..
+realm-cli push --local=realm --remote=landing-mgxlk --include-hosting -y
+rm -rf ./realm
