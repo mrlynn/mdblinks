@@ -77,7 +77,7 @@ export default function Routes () {
   const showChartModal = async (route) => {
     setChartModalOpened(true);
     setChartRoute(route);
-    let stats = realmUser.functions.getRouteStats(route);
+    let stats = await realmUser.functions.getRouteStats(route);
     setRouteStats(stats);
   }
 
