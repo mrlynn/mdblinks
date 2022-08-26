@@ -4,6 +4,7 @@ import { MongoDBLogo } from "@leafygreen-ui/logo";
 import { H1, H2, Body } from "@leafygreen-ui/typography";
 import Button from "@leafygreen-ui/button";
 import ReactMarkdown from 'react-markdown'
+import { useParams } from "react-router-dom";
 
 
 let topBannerStyle = css`
@@ -102,25 +103,7 @@ const footerStyle = css`
 `
 
 export default function Landing() {
-
-  useEffect(() => {
-    const getNearbyEvent = async () => {
-      let event = await fetch("https://data.mongodb-api.com/app/landing-mgxlk/endpoint/getNearbyEvents").then(resp => resp.json());
-      if (Array.isArray(event)) event = event[0];
-      setLandingPageData({...landingPageData, nearbyEvent: event});
-    }
-    getNearbyEvent();
-  });
-
-  let codeAndSlidesMdBlock = `
-### Code 
-There's nothing like **looking** at some code to learn about a topic.
-All of the code samples that were shown in this talk can be found on [Github](http://github.com/joellord/mern-k8s).
-
-### Slides
-If you want to _browse_ through the slides at your own pace, you can look at them [here](https://docs.google.com/presentation/u/1/d/1ytFSJXWACBtTNMgyFsiiyBAkPfruMiCeoQ_0QPFBQ_s/edit?usp=chrome_omnibox&ouid=110821894784085411919)
-`
-
+  let params = useParams();
   let [landingPageData, setLandingPageData] = useState({
     title: "Title",
     subtitle: "Subtitle",
@@ -129,19 +112,27 @@ If you want to _browse_ through the slides at your own pace, you can look at the
       label: "Try MongoDB now",
       linkTo: "http://mongodb.com"
     },
-    nearbyEvent: {
-      oneliner: "Looking for a nearby event...",
-      date: "",
-      ctaButton: {
-        label: "Check the list",
-        linkTo: "http://community.mongodb.com"
-      }
-    },
     otherSections: [
-      {title: "Find out more", text: "Learn more about this stuff"},
-      {title: "Code and Slides", text: codeAndSlidesMdBlock }
     ]
   });
+  let [nearbyEvent, setNearbyEvent] = useState({});
+
+  useEffect(() => {
+    const getLanding = async () => {
+      let landing = await fetch(`https://data.mongodb-api.com/app/landing-mgxlk/endpoint/landing?identifier=${params.identifier}`).then(resp => resp.json());
+      setLandingPageData(landing);
+    }
+    getLanding();
+  }, [params]);
+
+  useEffect(() => {
+    const getNearbyEvent = async () => {
+      let event = await fetch("https://data.mongodb-api.com/app/landing-mgxlk/endpoint/getNearbyEvents").then(resp => resp.json());
+      if (Array.isArray(event)) event = event[0];
+      setNearbyEvent(event);
+    }
+    getNearbyEvent();
+  }, [landingPageData]);
 
   return (
     <React.Fragment>
@@ -172,9 +163,11 @@ If you want to _browse_ through the slides at your own pace, you can look at the
       </section>
       <section className={mdbEventBannerStyle}>
         <H2>Want to learn more about MongoDB?</H2>
-        <Body>{landingPageData.nearbyEvent.oneliner}</Body>
+        <Body>{nearbyEvent?.oneliner || "Looking for nearby events"}</Body>
         <Body>
-          <Button href={landingPageData.nearbyEvent.ctaButton.linkTo}>{landingPageData.nearbyEvent.ctaButton.label}</Button>
+          {nearbyEvent?.ctaButton &&
+            <Button href={nearbyEvent.ctaButton.linkTo}>{nearbyEvent.ctaButton.label}</Button>
+          }
         </Body>
       </section>
       <section className={findOutMoreStyle}>
@@ -182,7 +175,7 @@ If you want to _browse_ through the slides at your own pace, you can look at the
           <div className={findOutMoreSectionStyle} key={s.title}>
             <H2>{s.title}</H2>
             <div className={findOutMoreBodyStyle}>
-              <ReactMarkdown disallowedElements={["h1", "h2"]} children={s.text}></ReactMarkdown>
+              <ReactMarkdown disallowedElements={["h1", "h2"]} children={s.content}></ReactMarkdown>
             </div>
           </div>
         )})}

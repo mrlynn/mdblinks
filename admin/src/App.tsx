@@ -13,6 +13,7 @@ import settings from "./config";
 
 import Home from "./pages/Home";
 import Shorties from "./pages/Shorties";
+import Landings from "./pages/Landings";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import Stats from "./pages/Stats";
@@ -36,6 +37,7 @@ function App() {
               <Route path="/" element={<Layout />}>
                 <Route path="app" element={<PrivateOutlet />}>
                   <Route path="routes" element={<Shorties />} />
+                  <Route path="landings" element={<Landings />} />
                   <Route path="stats" element={<Stats />} />
                 </Route>
                 <Route path="/" element={<Home />} />
