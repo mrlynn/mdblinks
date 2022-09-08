@@ -32,7 +32,7 @@ if [ "$REDIRECTOR" = true ]; then
   cd redirector
   cp -r . ../realm/hosting/files
   cd ..
-  realm-cli push --local=realm --remote=redirector-odhgb --include-hosting -y
+  realm-cli push --local=realm --remote=redirector-odhgb --include-hosting --reset-cdn-cache -y
   rm -rf ./realm
 fi
 
@@ -46,7 +46,7 @@ if [ "$ADMIN" = true ]; then
   cp -r ./build/* ../realm/hosting/files
   rm -rf ./build
   cd ..
-  realm-cli push --local=realm --remote=admin-toxzg --include-hosting -y
+  realm-cli push --local=realm --remote=admin-toxzg --include-hosting --reset-cdn-cache -y
   rm -rf ./realm
 fi
 
@@ -60,6 +60,6 @@ if [ "$LANDING" = true ]; then
   cp -r ./build/* ../realm/hosting/files
   rm -rf ./build
   cd ..
-  realm-cli push --local=realm --remote=landing-mgxlk --include-hosting -y
+  realm-cli push --local=realm --remote=landing-mgxlk --include-hosting --reset-cdn-cache -y
   rm -rf ./realm
 fi
