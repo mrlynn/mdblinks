@@ -28,7 +28,7 @@ const credentials = Realm.Credentials.anonymous();
 const main = async () => {
   const user = await app.logIn(credentials);
   const route = location.pathname;
-  const routeDetails = await user.functions.getRouteDetails(route);
+  const routeDetails = await user.functions.getRouteDetails(route, document.referrer);
   if (routeDetails?.match) {
     console.log(routeDetails);
 
