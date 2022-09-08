@@ -8,6 +8,8 @@ import Checkbox from '@leafygreen-ui/checkbox';
 import Button from "@leafygreen-ui/button";
 import Icon from '@leafygreen-ui/icon';
 import IconButton from '@leafygreen-ui/icon-button';
+import { Combobox, ComboboxOption } from '@leafygreen-ui/combobox';
+import { spacing } from '@leafygreen-ui/tokens';
 import { useRealm } from "../providers/Realm";
 import { css } from "@leafygreen-ui/emotion";
 
@@ -27,6 +29,7 @@ export default function Routes () {
   let [isPublic, setIsPublic] = useState(true); 
   let [data, setData] = useState([]);
   let [modalMode, setModalMode] = useState("add");
+  let [landings, setLandings] = useState([]);
 
   let { realmUser } = useRealm();
   let currentUserId = realmUser?.id;
@@ -49,6 +52,12 @@ export default function Routes () {
     if(!realmUser) return;
     let results = await realmUser.functions.getAllRoutes(); 
     setData(results);
+  }, [realmUser]);
+
+  const getLandings = useCallback(async () => {
+    if (!realmUser) return;
+    let results = await realmUser.functions.getAllLandings();
+    setLandings(results);
   }, [realmUser]);
 
   const handleDelete = async (id) => {
@@ -103,7 +112,23 @@ export default function Routes () {
     setModalMode("edit");
   }
 
-  useEffect(() => { getData() }, [getData]);
+  const handleLandingChange = (value) => {
+    if (!value) {
+      emptyForm();
+      return;
+    }
+
+    let landing = landings.find(l => l.identifier === value);
+    setTo(`https://landing.mdb.link/${landing.identifier}`);
+    setTitle(landing.title);
+    setDescription(landing.summary);
+  }
+
+  useEffect(() => {
+    getData();
+    getLandings();
+
+  }, [getData, getLandings]);
 
   return  (
     <React.Fragment>
@@ -133,7 +158,24 @@ export default function Routes () {
           placeholder="/route"
           onChange={e => setRoute(e.target.value)}
           value={route}
+          disabled={modalMode === "edit"}
         />
+
+        <span style={{ margin: spacing[3] }}>
+          <Combobox
+            label="Populate from landing page"
+            description="Select a landing page to pre-populate fields or leave empty to use a custom URL"
+            placeholder="New page"
+            onChange={handleLandingChange}
+          >
+            {landings.map(l => {
+              return(
+                <ComboboxOption value={l.identifier} displayName={`${l.identifier} - ${l.title}`} />
+              )
+            })}
+          </Combobox>
+        </span>
+
         <TextInput
           label="Destination"
           description="Enter a destination URL"
