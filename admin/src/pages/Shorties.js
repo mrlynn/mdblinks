@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback, useRef} from "react";
-import { H2, H3, Body } from "@leafygreen-ui/typography";
+import { H2, H3, Body, Link } from "@leafygreen-ui/typography";
 import { Table, TableHeader, Row, Cell } from '@leafygreen-ui/table';
 import ConfirmationModal from "@leafygreen-ui/confirmation-modal";
 import Modal from "@leafygreen-ui/modal";
@@ -26,6 +26,7 @@ export default function Routes () {
   let [to, setTo] = useState("");
   let [isPublic, setIsPublic] = useState(true); 
   let [data, setData] = useState([]);
+  let [modalMode, setModalMode] = useState("add");
 
   let { realmUser } = useRealm();
   let currentUserId = realmUser?.id;
@@ -56,18 +57,19 @@ export default function Routes () {
   }
 
   const handleModalConfirm = async() => {
-    await realmUser.functions.insertRoute({route, to, title, description, isPublic});
+    let newRoute = {route, to, title, description, isPublic};
+    if (modalMode === "add") await realmUser.functions.insertRoute(newRoute);
+    if (modalMode === "edit") await realmUser.functions.updateRoute(newRoute);
     await getData();
-    setRoute("");
-    setTo("");
-    setDescription("");
-    setTitle("");
+    emptyForm();
     setInsertModalOpened(false);
+    setModalMode("add");
   }
 
-  const showQrCode = async (route, destinationUrl) => {
+  const showQrCode = async (route) => {
     await setQrCodeModalOpened(true);
     setQrCodeDestination(`mdb.link${route}`);
+    let destinationUrl = `https://mdb.link${route}`;
     let canvas = canvasRef.current; 
     QRCode.toCanvas(canvas, destinationUrl, {width: 480, color: {dark: "#023430"}}, function (error) {
       if (error) console.error(error);
@@ -79,6 +81,26 @@ export default function Routes () {
     setChartRoute(route);
     let stats = await realmUser.functions.getRouteStats(route);
     setRouteStats(stats);
+  }
+
+  const emptyForm = () => {
+    setRoute("");
+    setTo("");
+    setDescription("");
+    setTitle("");
+    setIsPublic(true);
+  }
+
+  const editRoute = (route) => {
+    let editRoute = data.find(r => r.route === route);
+    setRoute(editRoute.route);
+    setTo(editRoute.to);
+    setDescription(editRoute.description);
+    setTitle(editRoute.title);
+    setIsPublic(editRoute.isPublic);
+
+    setInsertModalOpened(true);
+    setModalMode("edit");
   }
 
   useEffect(() => { getData() }, [getData]);
@@ -150,6 +172,16 @@ export default function Routes () {
         <Body>
           Number of visitors in the last 7 days: {routeStats?.stats?.visits || "0"}
         </Body>
+        <Body>
+          Top referrers:
+          <ul>
+            {(routeStats?.stats?.topReferrers || []).map(r => {
+              return (
+                <li>{r._id} ({r.count})</li>
+              )
+            })}
+          </ul>
+        </Body>
       </Modal>
 
       <Table
@@ -164,8 +196,8 @@ export default function Routes () {
       >
         {({ datum }) => (
           <Row key={datum._id}>
-            <Cell>{datum.route}</Cell>
-            <Cell>{datum.to}</Cell>
+            <Cell><Link href={`https://mdb.link${datum.route}`} rel="noreferrer" target="_blank">{datum.route}</Link></Cell>
+            <Cell><Link href={datum.to} rel="noreferrer" target="_blank">{datum.to}</Link></Cell>
             <Cell>{datum.title || " "}</Cell>
             <Cell>{datum.isPublic ? "Yes" : "No"}</Cell>
             <Cell>
@@ -174,7 +206,12 @@ export default function Routes () {
                 <Icon glyph="Trash" fill="#aa0000" />
               </IconButton>
               }
-              <IconButton darkMode={true} aria-label="QRCode" onClick={() => showQrCode(datum.route, datum.to)}>
+              {currentUserId === datum.owner && 
+              <IconButton aria-label="Edit" onClick={() => editRoute(datum.route)}>
+                <Icon glyph="Edit" />
+              </IconButton>
+              }
+              <IconButton darkMode={true} aria-label="QRCode" onClick={() => showQrCode(datum.route)}>
                 <Icon glyph="Sweep" />
               </IconButton>
               <IconButton darkMode={true} aria-label="Chart" onClick={() => showChartModal(datum.route)}>
