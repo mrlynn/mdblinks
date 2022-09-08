@@ -73,6 +73,7 @@ export default function Landings () {
   let [showMyLandings, setShowMyLandings] = useState(true);
   let [insertModalOpened, setInsertModalOpened] = useState(false);
   let [landings, setLandings] = useState([]);
+  let [modalMode, setModalMode] = useState("add");
   
   // New Landing form
   let [identifier, setIdentifier] = useState("");  
@@ -83,6 +84,7 @@ export default function Landings () {
   let [ctaLabel, setCtaLabel] = useState("Try MongoDB Now");
   let [ctaLink, setCtaLink] = useState("https://mongodb.com");
   let [otherSections, setOtherSections] = useState([{title: "Other content", content: ""}]);
+  let [additionalResources, setAdditionalResources] = useState([{title: "", link: ""}, {title: "", link: ""}, {title: "", link: ""}])
 
   const handleNewSection = () => {
     setOtherSections([...otherSections, {title: "New Section", content: ""}])
@@ -108,16 +110,74 @@ export default function Landings () {
     setOtherSections(sections);
   }
 
+  const resourceTitleChange = (index, value) => {
+    let resources = additionalResources.map((r, i) => {
+      if (i === index) r.title = value;
+      return r;
+    });
+    setAdditionalResources(resources);
+  }
+
+  const resourceLinkChange = (index, value) => {
+    let resources = additionalResources.map((r, i) => {
+      if (i === index) r.link = value;
+      return r;
+    });
+    setAdditionalResources(resources);
+  }
+
+  const handleNewResource = () => {
+    setAdditionalResources([...(additionalResources || []), {title: "", link: ""}])
+  }
+
   const handleIdentifierChange = value => {
-    setIdentifierState(value.match(/^[a-z-]*$/) ? "valid" : "error");
+    setIdentifierState(value.match(/^[a-z0-9-]*$/) ? "valid" : "error");
     setIdentifier(value);
   }
 
   const saveNewLanding = () => {
     const ctaButton = {label: ctaLabel, linkTo: ctaLink};
-    const landing = { title, subtitle, summary, ctaButton, otherSections, identifier };
-    realmUser.functions.insertLanding(landing);
+    const landing = { title, subtitle, summary, ctaButton, otherSections, additionalResources, identifier };
+    if (modalMode === "add") realmUser.functions.insertLanding(landing);
+    if (modalMode === "edit") realmUser.functions.updateLanding(landing);
     setInsertModalOpened(false);
+    emptyForm();
+    setModalMode("add");
+  }
+
+  const emptyForm = () => {
+    setIdentifier("");
+    setTitle("");
+    setSubtitle("");
+    setSummary("");
+    setCtaLabel("Try MongoDB Now");
+    setCtaLink("https://mongodb.com");
+    setOtherSections([{title: "Other content", content: ""}]);
+    setAdditionalResources([{title: "", link: ""}, {title: "", link: ""}, {title: "", link: ""}]);
+  }
+
+  const fillForm = identifier => {
+    let landing = landings.find(l => l.identifier === identifier);
+    setIdentifier(landing.identifier);
+    setTitle(landing.title);
+    setSubtitle(landing.subtitle);
+    setSummary(landing.summary);
+    setCtaLabel(landing.ctaButton.label);
+    setCtaLink(landing.ctaButton.linkTo);
+    setOtherSections(landing.otherSections);
+    setAdditionalResources(landing.additionalResources);
+  }
+
+  const editLanding = identifier => {
+    fillForm(identifier);
+    setInsertModalOpened(true);
+    setModalMode("edit");
+  }
+
+  const cloneLanding = identifier => {
+    fillForm(identifier);
+    setInsertModalOpened(true);
+    setModalMode("add");
   }
 
   return(
@@ -154,7 +214,7 @@ export default function Landings () {
       <ConfirmationModal 
         open={insertModalOpened}
         onCancel={() => setInsertModalOpened(false)}
-        title="Create a landing page"
+        title={`${modalMode === "edit" ? "Update" : "Create"} a landing page`}
         buttonText="Save"
         onConfirm={saveNewLanding}
       >
@@ -165,8 +225,9 @@ export default function Landings () {
               label="Internal Identifier"
               description="Used only by this application so you can recognize this landing page, and as the URL."
               value={identifier}
-              errorMessage="You may only use lowercase letters and hypens."
+              errorMessage="You may only use lowercase letters, numbers, and hypens."
               state={identifierState}
+              disabled={modalMode === "edit"}
               onChange={e => handleIdentifierChange(e.target.value)} />
           </section>
           <section>
@@ -199,6 +260,18 @@ export default function Landings () {
                 )
               })}
           </section>
+          <section className={otherSectionsStyle}>
+            <H3>Additional Resources</H3>
+            <Button onClick={handleNewResource} variant="primaryOutline" leftGlyph={<Icon glyph="Plus" />}>Add Resource</Button>
+            {additionalResources?.map((resource, index) => {
+                return(
+                  <div>
+                    <TextInput label="Title" value={resource.title} onChange={(e) => resourceTitleChange(index, e.target.value)}/>
+                    <TextInput label="Link" value={resource.link} onChange={(e) => resourceLinkChange(index, e.target.value)}/>
+                  </div>
+                )
+              })}
+          </section>
         </form>
       </ConfirmationModal>
 
@@ -220,8 +293,16 @@ export default function Landings () {
                 <Icon glyph="Trash" fill="#aa0000" />
               </IconButton>
               }
+              {currentUserId === datum.owner && 
+              <IconButton darkMode={false} aria-label="Edit" onClick={() => editLanding(datum.identifier)}>
+                <Icon glyph="Edit" fill="#023430" />
+              </IconButton>
+              }
+              <IconButton aria-label="Clone" onClick={() => cloneLanding(datum.identifier)}>
+                <Icon glyph="Clone" fill="#023430" />
+              </IconButton>
               <IconButton aria-label="Preview" href={`${Config.LANDING.URL}/${datum.identifier}`} target="_blank">
-                <Icon glyph="Link" />
+                <Icon glyph="Link" fill="#023430" />
               </IconButton>
             </Cell>
           </Row>

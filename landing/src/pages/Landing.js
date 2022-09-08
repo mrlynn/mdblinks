@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { css } from "@leafygreen-ui/emotion";
 import { MongoDBLogo } from "@leafygreen-ui/logo";
-import { H1, H2, Body } from "@leafygreen-ui/typography";
+import { H1, H2, H3, Body } from "@leafygreen-ui/typography";
+import Card from '@leafygreen-ui/card';
 import Button from "@leafygreen-ui/button";
+import Icon from '@leafygreen-ui/icon';
+
 import ReactMarkdown from 'react-markdown'
 import { useParams } from "react-router-dom";
+import AliceCarousel from 'react-alice-carousel';
+import 'react-alice-carousel/lib/alice-carousel.css';
+import '../carousel.css';
 
 
 let topBannerStyle = css`
@@ -65,11 +71,37 @@ const mdbEventBannerStyle = css`
     grid-column: 2/span 10;
     color: white;
   }
-  p {
+  h3 {
     grid-column: 2/span 10;
+  }
+  p {
+    grid-column: 3/span 8;
     font-size: 20px;
     color: #b8c4c2;
     padding-top: 20px;
+  }
+`
+
+const additionalResourcesStyle = css`
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+`
+
+const additionalResourcesSectionStyle = css`
+  grid-column: 4/span 6;
+  margin-top: 50px;
+  width: 100%;
+  h2 {
+    padding-bottom: 20px;
+  }
+`
+
+const cardStyle = css`
+  text-align: center;
+  display: grid;
+  grid-row-gap: 10px;
+  div {
+    grid-template-rows: auto;
   }
 `
 
@@ -117,6 +149,12 @@ export default function Landing() {
   });
   let [nearbyEvent, setNearbyEvent] = useState({});
 
+  const addUtms = (link) => {
+    if(link.match("utm")) return link;
+    link += `?utm_campaign=mdblink_landing&utm_source=${params.identifier}&utm_medium=ctapage`;
+    return link;
+  }
+
   useEffect(() => {
     const getLanding = async () => {
       let landing = await fetch(`https://data.mongodb-api.com/app/landing-mgxlk/endpoint/landing?identifier=${params.identifier}`).then(resp => resp.json());
@@ -137,7 +175,7 @@ export default function Landing() {
   return (
     <React.Fragment>
       <section className={topBannerStyle}>
-        <a href="http://mongodb.com">
+        <a href={addUtms("http://mongodb.com")}>
           <MongoDBLogo color="white" height={30} />
         </a>
       </section>
@@ -155,7 +193,7 @@ export default function Landing() {
             </div>
             <div style={{gridColumn: "6/span 2"}}>
               <div className={ctaButtonStyle}>
-                <Button variant="baseGreen" size="large" href={landingPageData.ctaButton.linkTo}>{landingPageData.ctaButton.label}</Button>
+                <Button variant="baseGreen" size="large" href={addUtms(landingPageData.ctaButton.linkTo)}>{landingPageData.ctaButton.label}</Button>
               </div>
             </div>
           </div>
@@ -163,15 +201,74 @@ export default function Landing() {
       </section>
       <section className={mdbEventBannerStyle}>
         <H2>Want to learn more about MongoDB?</H2>
-        <Body>{nearbyEvent?.oneliner || "Looking for nearby events"}</Body>
+        <H3>{nearbyEvent?.oneliner || "Looking for nearby events"}</H3>
+        <Body>{nearbyEvent?.details}</Body>
         <Body>
           {nearbyEvent?.ctaButton &&
-            <Button href={nearbyEvent.ctaButton.linkTo}>{nearbyEvent.ctaButton.label}</Button>
+            <Button href={addUtms(nearbyEvent.ctaButton.linkTo)}>{nearbyEvent.ctaButton.label}</Button>
           }
         </Body>
       </section>
       <section className={findOutMoreStyle}>
-        {landingPageData.otherSections.map((s) => { return (
+        {landingPageData.otherSections.slice(0, 1).map((s) => {
+          return (
+          <div className={findOutMoreSectionStyle} key={s.title}>
+            <H2>{s.title}</H2>
+            <div className={findOutMoreBodyStyle}>
+              <ReactMarkdown disallowedElements={["h1", "h2"]} children={s.content}></ReactMarkdown>
+            </div>
+          </div>
+        )})}
+      </section>
+      <section className={additionalResourcesStyle}>
+        <div className={additionalResourcesSectionStyle}>
+          <H2>Additional Resources</H2>
+          <AliceCarousel infinite mouseTracking responsive={{
+            0: {
+                items: 1,
+            },
+            1024: {
+                items: 3
+            }
+          }} items={landingPageData?.additionalResources?.map((r, i) => {
+            let type = "default";
+            if (r.link.includes("mongodb.com/developer")) type = "devcenter";
+            if (r.link.includes("youtube.com")) type = "video";
+            let iconGlyph;
+            let linkText;
+            switch(type) {
+              case "video": 
+                iconGlyph = "Megaphone";
+                linkText = "Check out the video";
+                break;
+              case "devcenter": 
+                iconGlyph = "Code";
+                linkText = "Developer Center";
+                break;
+              default:
+                iconGlyph = "InfoWithCircle";
+                linkText = "Learn More";
+            }
+            return (
+              <Card key={i} className={cardStyle}>
+                <div>
+                  <Icon glyph={iconGlyph} size="xlarge" /> 
+                </div>
+                <div>
+                  {r.title}
+                </div>
+                <div>
+                  <a href={addUtms(r.link)} rel="noreferrer" target="_blank">{linkText}</a>
+                </div>
+              </Card>
+            )
+          })} />
+            
+        </div>
+      </section>
+      <section className={findOutMoreStyle}>
+        {landingPageData.otherSections.slice(1).map((s) => {
+          return (
           <div className={findOutMoreSectionStyle} key={s.title}>
             <H2>{s.title}</H2>
             <div className={findOutMoreBodyStyle}>
