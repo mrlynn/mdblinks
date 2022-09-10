@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useCallback, useRef} from "react";
-import { H2, H3, Body, Link } from "@leafygreen-ui/typography";
+import { H2, H3, Body, Link, Label, Description } from "@leafygreen-ui/typography";
 import { Table, TableHeader, Row, Cell } from '@leafygreen-ui/table';
+import Toggle from "@leafygreen-ui/toggle";
 import ConfirmationModal from "@leafygreen-ui/confirmation-modal";
 import Modal from "@leafygreen-ui/modal";
 import TextInput from '@leafygreen-ui/text-input';
@@ -30,6 +31,7 @@ export default function Routes () {
   let [data, setData] = useState([]);
   let [modalMode, setModalMode] = useState("add");
   let [landings, setLandings] = useState([]);
+  let [showMyRoutes, setShowMyRoutes] = useState(true);
 
   let { realmUser } = useRealm();
   let currentUserId = realmUser?.id;
@@ -45,6 +47,13 @@ export default function Routes () {
   const topBarStyle = css`
     text-align: right;
   `
+
+  const toggleButtonStyle = css`
+    padding-right: 30px;
+    display: block;
+    float: left;
+    text-align: left;
+  `;
 
   const canvasRef = useRef(null);
 
@@ -135,13 +144,31 @@ export default function Routes () {
       <H2>List of Short URLs</H2>
 
       <p className={topBarStyle}>
-        <Button 
-          onClick={() => setInsertModalOpened(true)}
-          variant="primary"
-          leftGlyph={<Icon glyph="Plus" />}
-        >
-          Insert New Short URL
-        </Button>
+      <div>
+          <div className={toggleButtonStyle}>
+            <Label id="toggleLabel" htmlFor="myLandingsToggle">
+              Show Mine
+            </Label>
+            <Description>Show only landing pages that I have created</Description>
+          </div>
+          <div style={{display: "block", float: "left"}}>
+            <Toggle
+              id="myLandingsToggle"
+              aria-labelledby="toggleLabel"
+              onChange={(checked) => setShowMyRoutes(checked)}
+              checked={showMyRoutes}
+            />
+          </div>
+        </div>
+        <div>
+          <Button 
+            onClick={() => setInsertModalOpened(true)}
+            variant="primary"
+            leftGlyph={<Icon glyph="Plus" />}
+          >
+            Insert New Short URL
+          </Button>
+        </div>
       </p>
 
       <ConfirmationModal
@@ -236,7 +263,9 @@ export default function Routes () {
           <TableHeader label="Actions" />
         ]}
       >
-        {({ datum }) => (
+        {({ datum }) => {
+          if (showMyRoutes && datum.owner !== currentUserId) return;
+          return (
           <Row key={datum._id}>
             <Cell><Link href={`https://mdb.link${datum.route}`} rel="noreferrer" target="_blank">{datum.route}</Link></Cell>
             <Cell><Link href={datum.to} rel="noreferrer" target="_blank">{datum.to}</Link></Cell>
@@ -261,7 +290,8 @@ export default function Routes () {
               </IconButton>
             </Cell>
           </Row>
-        )}
+        )
+        }}
       </Table>
     </React.Fragment>
   )
