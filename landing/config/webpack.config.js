@@ -562,6 +562,9 @@ module.exports = function (webpackEnv) {
         Object.assign(
           {},
           {
+            filename: isEnvProduction ? "index.php" : "index.html"
+          },
+          {
             inject: true,
             template: paths.appHtml,
           },
