@@ -26,6 +26,16 @@
     -->
     <title>Landing page from mdb.link</title>
   </head>
+  <script>
+    <?
+      $url = "https://data.mongodb-api.com/app/landing-mgxlk/endpoint/landing?identifier=".$_SERVER['REQUEST_URI'];
+      $contents = file_get_contents($url);
+      $decoded = json_decode($contents);
+      if ($decoded->title) {
+        echo "window.landingData = ".$contents;
+      }
+    ?>
+  </script>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>

@@ -160,7 +160,11 @@ export default function Landing() {
       let landing = await fetch(`https://data.mongodb-api.com/app/landing-mgxlk/endpoint/landing?identifier=${params.identifier}`).then(resp => resp.json());
       setLandingPageData(landing);
     }
-    getLanding();
+    if (window.landingData) {
+      setLandingPageData(window.landingData);
+    } else {
+      getLanding();
+    }
   }, [params]);
 
   useEffect(() => {
