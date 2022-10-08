@@ -16,10 +16,10 @@
   <link rel="icon" href="/favicon.ico" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Landing page from mdb.link" />
+  <meta name="description" content="<?= $decoded->summary ?>" />
   <link rel="apple-touch-icon" href="/logo192.png" />
   <link rel="manifest" href="/manifest.json" />
-  <title><?= $decoded->title || "Landing page on mdb.link" ?></title>
+  <title><?= $decoded->title ?></title>
   <link href="/static/css/2.cc57a610.chunk.css" rel="stylesheet">
   <link href="/static/css/main.0e40a79d.chunk.css" rel="stylesheet">
 </head>

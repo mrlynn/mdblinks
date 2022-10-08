@@ -9,7 +9,7 @@ export default function Login () {
   const { logout } = useAuth0();
 
   const handleLogout = async () => {
-    await logout();
+    await logout({ returnTo: "https://admin.mdb.link" });
   }
 
   const headerStyle = css`
