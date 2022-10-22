@@ -24,6 +24,7 @@ export default function Routes () {
   let [chartRoute, setChartRoute] = useState("");
   let [routeStats, setRouteStats] = useState({});
   let [route, setRoute] = useState("");
+  let [routeValid, setRouteValid] = useState(true);
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
   let [to, setTo] = useState("");
@@ -177,13 +178,23 @@ export default function Routes () {
         onCancel={() => setInsertModalOpened(false)}
         title="Add New Short URL"
         buttonText="Save New Shortie"
+        submitDisabled={!routeValid}
       >
         Create a new short route here.
         <TextInput
           label="Short Route"
           description="Route starting with '/'"
           placeholder="/route"
-          onChange={e => setRoute(e.target.value)}
+          onChange={e => {
+            setRoute(e.target.value);
+            if (route.substring(0,1) !== "/") {
+              setRouteValid(false);
+            } else {
+              setRouteValid(true);
+            }
+          }}
+          errorMessage="Route must start with a forward slash (/)"
+          state={routeValid ? "valid" : "error"}
           value={route}
           disabled={modalMode === "edit"}
         />
