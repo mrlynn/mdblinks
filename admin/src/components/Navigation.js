@@ -10,6 +10,7 @@ export default function Navigation ({ className }) {
       <SideNavItem aria-label="Home" as={Link} active={location.pathname === "/"} to="/">Home</SideNavItem>
       <SideNavItem aria-label="Short URLs" as={Link} active={location.pathname === "/app/routes"} to="/app/routes">Short URLs</SideNavItem>
       <SideNavItem aria-label="Landing Pages" as={Link} active={location.pathname === "/app/landings"} to="/app/landings">Landing Pages</SideNavItem>
+      <SideNavItem aria-label="UTM Link Builder" as={Link} active={location.pathname === "/app/utmbuilder"} to="/app/utmbuilder">UTM Link Builder</SideNavItem>
       <SideNavItem aria-label="Dashboard" as={Link} active={location.pathname === "/app/stats"} to="/app/stats">Dashboard</SideNavItem>
       <SideNavItem aria-label="Logout" as={Link} active={location.pathname === "/logout"} to="/logout">Logout</SideNavItem>
     </SideNav>

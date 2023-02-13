@@ -13,6 +13,7 @@ import settings from "./config";
 
 import Home from "./pages/Home";
 import Shorties from "./pages/Shorties";
+import UTMBuilder from "./pages/UTMBuilder";
 import Landings from "./pages/Landings";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
@@ -38,6 +39,7 @@ function App() {
                 <Route path="app" element={<PrivateOutlet />}>
                   <Route path="routes" element={<Shorties />} />
                   <Route path="landings" element={<Landings />} />
+                  <Route path="utmbuilder" element={<UTMBuilder />} />
                   <Route path="stats" element={<Stats />} />
                 </Route>
                 <Route path="/" element={<Home />} />

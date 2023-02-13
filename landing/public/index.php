@@ -20,13 +20,13 @@
   <link rel="apple-touch-icon" href="/logo192.png" />
   <link rel="manifest" href="/manifest.json" />
   <title><?= $decoded->title ?></title>
-  <link href="/static/css/2.cc57a610.chunk.css" rel="stylesheet">
-  <link href="/static/css/main.0e40a79d.chunk.css" rel="stylesheet">
+  <!-- <link href="/static/css/2.cc57a610.chunk.css" rel="stylesheet">
+  <link href="/static/css/main.0e40a79d.chunk.css" rel="stylesheet"> -->
 </head>
 
 <body><noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
-  <script>
+  <!-- <script>
     ! function(e) {
       function r(r) {
         for (var n, i, a = r[0], c = r[1], l = r[2], s = 0, p = []; s < a.length; s++) i = a[s], Object.prototype.hasOwnProperty.call(o, i) && o[i] && p.push(o[i][0]), o[i] = 0;
@@ -139,9 +139,9 @@
       var f = c;
       t()
     }([])
-  </script>
-  <script src="/static/js/2.897b7629.chunk.js"></script>
-  <script src="/static/js/main.99c715eb.chunk.js"></script>
+  </script> -->
+  <!-- <script src="/static/js/2.897b7629.chunk.js"></script>
+  <script src="/static/js/main.99c715eb.chunk.js"></script> -->
 </body>
 
 </html>

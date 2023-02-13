@@ -151,7 +151,12 @@ export default function Landing() {
 
   const addUtms = (link) => {
     if(link.match("utm")) return link;
-    link += `?utm_campaign=mdblink_landing&utm_source=${params.identifier}&utm_medium=ctapage`;
+    const campaign = "devrel";
+    const source = "event";
+    const medium = "cta";
+    const content = params.identifier;
+
+    link += `?utm_campaign=${campaign}&utm_source=${source}&utm_medium=${medium}&utm_content=${content}`;
     return link;
   }
 
@@ -241,11 +246,11 @@ export default function Landing() {
             let iconGlyph;
             let linkText;
             switch(type) {
-              case "video": 
+              case "video":
                 iconGlyph = "Megaphone";
                 linkText = "Check out the video";
                 break;
-              case "devcenter": 
+              case "devcenter":
                 iconGlyph = "Code";
                 linkText = "Developer Center";
                 break;
@@ -256,7 +261,7 @@ export default function Landing() {
             return (
               <Card key={i} className={cardStyle}>
                 <div>
-                  <Icon glyph={iconGlyph} size="xlarge" /> 
+                  <Icon glyph={iconGlyph} size="xlarge" />
                 </div>
                 <div>
                   {r.title}
@@ -267,7 +272,7 @@ export default function Landing() {
               </Card>
             )
           })} />
-            
+
         </div>
       </section>
       <section className={findOutMoreStyle}>
