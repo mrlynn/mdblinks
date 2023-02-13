@@ -11,10 +11,13 @@ import Icon from '@leafygreen-ui/icon';
 import IconButton from '@leafygreen-ui/icon-button';
 import { Combobox, ComboboxOption } from '@leafygreen-ui/combobox';
 import { spacing } from '@leafygreen-ui/tokens';
+import InlineDefinition from "@leafygreen-ui/inline-definition";
 import { useRealm } from "../providers/Realm";
 import { css } from "@leafygreen-ui/emotion";
 
 import * as QRCode from "qrcode";
+
+const TRUNCATE_LENGTH = 50;
 
 export default function Routes () {
   let [insertModalOpened, setInsertModalOpened] = useState(false);
@@ -28,7 +31,7 @@ export default function Routes () {
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
   let [to, setTo] = useState("");
-  let [isPublic, setIsPublic] = useState(true); 
+  let [isPublic, setIsPublic] = useState(true);
   let [data, setData] = useState([]);
   let [modalMode, setModalMode] = useState("add");
   let [landings, setLandings] = useState([]);
@@ -42,7 +45,7 @@ export default function Routes () {
   `
 
   const chartModalStyle = css`
-  
+
   `
 
   const topBarStyle = css`
@@ -60,7 +63,7 @@ export default function Routes () {
 
   const getData = useCallback(async () => {
     if(!realmUser) return;
-    let results = await realmUser.functions.getAllRoutes(); 
+    let results = await realmUser.functions.getAllRoutes();
     setData(results);
   }, [realmUser]);
 
@@ -89,7 +92,7 @@ export default function Routes () {
     await setQrCodeModalOpened(true);
     setQrCodeDestination(`mdb.link${route}`);
     let destinationUrl = `https://mdb.link${route}`;
-    let canvas = canvasRef.current; 
+    let canvas = canvasRef.current;
     QRCode.toCanvas(canvas, destinationUrl, {width: 480, color: {dark: "#023430"}}, function (error) {
       if (error) console.error(error);
     });
@@ -162,7 +165,7 @@ export default function Routes () {
           </div>
         </div>
         <div>
-          <Button 
+          <Button
             onClick={() => setInsertModalOpened(true)}
             variant="primary"
             leftGlyph={<Icon glyph="Plus" />}
@@ -279,16 +282,20 @@ export default function Routes () {
           return (
           <Row key={datum._id}>
             <Cell><Link href={`https://mdb.link${datum.route}`} rel="noreferrer" target="_blank">{datum.route}</Link></Cell>
-            <Cell><Link href={datum.to} rel="noreferrer" target="_blank">{datum.to}</Link></Cell>
+            <Cell>
+              <InlineDefinition definition={datum.to}>
+                <Link href={datum.to} rel="noreferrer" target="_blank">{`${datum.to.substr(0, TRUNCATE_LENGTH)}${datum.to.length > TRUNCATE_LENGTH ? "..." : ""}`}</Link>
+              </InlineDefinition>
+            </Cell>
             <Cell>{datum.title || " "}</Cell>
             <Cell>{datum.isPublic ? "Yes" : "No"}</Cell>
             <Cell>
-              {currentUserId === datum.owner && 
+              {currentUserId === datum.owner &&
               <IconButton darkMode={true} aria-label="Delete" onClick={() => handleDelete(datum._id.toString())}>
                 <Icon glyph="Trash" fill="#aa0000" />
               </IconButton>
               }
-              {currentUserId === datum.owner && 
+              {currentUserId === datum.owner &&
               <IconButton aria-label="Edit" onClick={() => editRoute(datum.route)}>
                 <Icon glyph="Edit" />
               </IconButton>

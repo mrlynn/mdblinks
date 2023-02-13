@@ -22,7 +22,7 @@
     "@leafygreen-ui/hooks": "^7.3.0",
     "@leafygreen-ui/icon": "^11.10.1",
     "@leafygreen-ui/icon-button": "^12.0.0",
-    "@leafygreen-ui/inline-definition": "^4.0.1",
+    "@leafygreen-ui/inline-definition": "^4.1.1",
     "@leafygreen-ui/interaction-ring": "^3.0.0",
     "@leafygreen-ui/leafygreen-provider": "^2.3.2",
     "@leafygreen-ui/lib": "^9.4.1",
