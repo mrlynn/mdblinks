@@ -18,6 +18,10 @@ import { css } from "@leafygreen-ui/emotion";
 import * as QRCode from "qrcode";
 
 const TRUNCATE_LENGTH = 50;
+const ERROR_MESSAGES = {
+  START_WITH_SLASH: "Route must start with a forward slash (/)",
+  ALREADY_EXISTS: "Route is already used for another URL"
+}
 
 export default function Routes () {
   let [insertModalOpened, setInsertModalOpened] = useState(false);
@@ -36,9 +40,11 @@ export default function Routes () {
   let [modalMode, setModalMode] = useState("add");
   let [landings, setLandings] = useState([]);
   let [showMyRoutes, setShowMyRoutes] = useState(true);
-
+  let [errorMessage, setErrorMessage] = useState(ERROR_MESSAGES.START_WITH_SLASH);
+  let [allRoutes, setAllRoutes] = useState([]);
   let { realmUser } = useRealm();
   let currentUserId = realmUser?.id;
+
 
   const qrCodeModalStyle = css`
     text-align: center;
@@ -65,6 +71,7 @@ export default function Routes () {
     if(!realmUser) return;
     let results = await realmUser.functions.getAllRoutes();
     setData(results);
+    setAllRoutes(results.map(r => r.route));
   }, [realmUser]);
 
   const getLandings = useCallback(async () => {
@@ -190,13 +197,17 @@ export default function Routes () {
           placeholder="/route"
           onChange={e => {
             setRoute(e.target.value);
-            if (route.substring(0,1) !== "/") {
+            if (e.target.value.substring(0,1) !== "/") {
               setRouteValid(false);
+              setErrorMessage(ERROR_MESSAGES.START_WITH_SLASH);
+            } else if (allRoutes.includes(e.target.value)) {
+              setRouteValid(false);
+              setErrorMessage(ERROR_MESSAGES.ALREADY_EXISTS);
             } else {
               setRouteValid(true);
             }
           }}
-          errorMessage="Route must start with a forward slash (/)"
+          errorMessage={errorMessage}
           state={routeValid ? "valid" : "error"}
           value={route}
           disabled={modalMode === "edit"}
