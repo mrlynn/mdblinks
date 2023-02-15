@@ -39,9 +39,7 @@ export default function Home () {
     {value: "event", displayName: "Events"},
     {value: "podcast", displayName: "Podcasts"},
     {value: "youtube", displayName: "Youtube"},
-    {value: "linkedin", displayName: "LinkedIn"},
-    {value: "twitter", displayName: "Twitter"},
-    {value: "instagram", displayName: "Instagram"},
+    {value: "social", displayName: "Social Media (LinkedIn, Twitter, Instagram ,...)"},
     {value: "cross-post", displayName: "Cross-Post"}
   ];
 
