@@ -79,7 +79,7 @@ export default function Home () {
             label="URL"
             description="This should be a page on the MongoDB website"
             placeholder="mongodb.com/..."
-            onChange={e => {
+            onInput={e => {
               setURL(e.target.value);
               if (!url.match(/mongodb\.com/)) {
                 setUrlValid(false);
