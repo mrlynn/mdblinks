@@ -37,6 +37,7 @@ export default function Home () {
 
   const sources = [
     {value: "event", displayName: "Events"},
+    {value: "workshop", displayName: "Workshops"},
     {value: "podcast", displayName: "Podcasts"},
     {value: "youtube", displayName: "Youtube"},
     {value: "social", displayName: "Social Media (LinkedIn, Twitter, Instagram ,...)"},
