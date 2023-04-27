@@ -82,7 +82,7 @@ export default function Home () {
             placeholder="mongodb.com/..."
             onChange={e => {
               setURL(e.target.value);
-              if (!url.match(/mongodb\.com/)) {
+              if (!e.target.value.match(/mongodb\.com/)) {
                 setUrlValid(false);
               } else {
                 setUrlValid(true);
