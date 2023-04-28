@@ -37,6 +37,7 @@ export default function Home () {
 
   const sources = [
     {value: "event", displayName: "Events"},
+    {value: "workshop", displayName: "Workshops"},
     {value: "podcast", displayName: "Podcasts"},
     {value: "youtube", displayName: "Youtube"},
     {value: "social", displayName: "Social Media (LinkedIn, Twitter, Instagram ,...)"},
@@ -45,8 +46,8 @@ export default function Home () {
 
   const mediums = [
     {value: "print", displayName: "Printed Handouts"},
-    {value: "shownotes", displayName: "Podcast or Youtube Show Notes"},
-    {value: "cta", displayName: "Call To Action link"}
+    {value: "shownotes", displayName: "Podcast or YouTube Show Notes"},
+    {value: "cta", displayName: "Call To Action Link"}
   ]
 
   const formStyle = css`
@@ -93,7 +94,7 @@ export default function Home () {
           /><br/>
           <TextInput
             label="Campaign"
-            description="Should always be set to `devrel`"
+            description="Should always be set to ‘devrel’"
             onChange={e => setCampaign(e.target.value)}
             disabled={true}
             value={campaign}
