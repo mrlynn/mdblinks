@@ -1,8 +1,7 @@
 import Header from "./Header";
 import Navigation from "./Navigation";
-import { css } from "@leafygreen-ui/emotion";import {
-  Outlet
-} from "react-router-dom";
+import { css } from "@leafygreen-ui/emotion";
+import { Outlet } from "react-router-dom";
 
 const gridStyle = css`
   display: grid;
@@ -18,16 +17,13 @@ const gridStyle = css`
 
 const headerStyle = css`
   grid-area: header;
-  display: flex;
-  align-items: center;
-  gap: 16px;
   padding: 24px;
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
 `;
 
 const sideNavStyle = css`
   grid-area: side-nav;
+  margin-top: 3px;
 `;
 
 const mainStyle = css`
