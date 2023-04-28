@@ -5,6 +5,7 @@ import { Combobox, ComboboxOption } from '@leafygreen-ui/combobox';
 import Copyable from "@leafygreen-ui/copyable";
 import { css } from "@leafygreen-ui/emotion";
 import { useAuth0 } from "@auth0/auth0-react";
+import { sources, mediums } from "../utils/utmdata";
 
 export default function Home () {
   const { user } = useAuth0();
@@ -34,21 +35,6 @@ export default function Home () {
     if (trueURL.slice(-1) === "&") trueURL = trueURL.substring(0, trueURL.length-1);
     setLinkWithUTM(trueURL);
   }, [url, campaign, source, medium, content, term]);
-
-  const sources = [
-    {value: "event", displayName: "Events"},
-    {value: "workshop", displayName: "Workshops"},
-    {value: "podcast", displayName: "Podcasts"},
-    {value: "youtube", displayName: "Youtube"},
-    {value: "social", displayName: "Social Media (LinkedIn, Twitter, Instagram ,...)"},
-    {value: "cross-post", displayName: "Cross-Post"}
-  ];
-
-  const mediums = [
-    {value: "print", displayName: "Printed Handouts"},
-    {value: "shownotes", displayName: "Podcast or YouTube Show Notes"},
-    {value: "cta", displayName: "Call To Action Link"}
-  ]
 
   const formStyle = css`
     margin: 0px 50px;

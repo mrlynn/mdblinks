@@ -18,6 +18,7 @@ import InlineDefinition from "@leafygreen-ui/inline-definition";
 import { useRealm } from "../providers/Realm";
 import { css } from "@leafygreen-ui/emotion";
 import { useAuth0 } from "@auth0/auth0-react";
+import { sources, mediums } from "../utils/utmdata";
 
 import * as QRCode from "qrcode";
 
@@ -77,20 +78,6 @@ export default function Routes () {
     setLinkWithUTM(trueURL);
     setTo(trueURL);
   }, [url, campaign, source, medium, content, term]);
-
-  const sources = [
-    {value: "event", displayName: "Events"},
-    {value: "podcast", displayName: "Podcasts"},
-    {value: "youtube", displayName: "Youtube"},
-    {value: "social", displayName: "Social Media (LinkedIn, Twitter, Instagram ,...)"},
-    {value: "cross-post", displayName: "Cross-Post"}
-  ];
-
-  const mediums = [
-    {value: "print", displayName: "Printed Handouts"},
-    {value: "shownotes", displayName: "Podcast or Youtube Show Notes"},
-    {value: "cta", displayName: "Call To Action link"}
-  ];
 
   const LINKTYPES = {UTM: "UTM", LANDING: "LANDING", DIRECT: "DIRECT"};
   let [ linkType, setLinkType ] = useState(LINKTYPES.UTM);
