@@ -314,8 +314,8 @@ export default function Routes () {
                   label="URL"
                   description="This should be a page on the MongoDB website"
                   placeholder="mongodb.com/..."
-                  onChange={e => {
-                    setURL(e.target.value);
+                  onChange={e => { setURL(e.target.value) }}
+                  onKeyUp={e => {
                     if (!url.match(/mongodb\.com/)) {
                       setUrlValid(false);
                     } else {
