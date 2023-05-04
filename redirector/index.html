@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="author" content="Joel Lord">
@@ -27,7 +27,11 @@ const credentials = Realm.Credentials.anonymous();
 
 const main = async () => {
   const user = await app.logIn(credentials);
-  const route = location.pathname;
+  let route = location.pathname;
+  // if route ends with "/", remove the last character
+  if (route.endsWith("/")) {
+    route = route.slice(0, -1);
+  }
   const routeDetails = await user.functions.getRouteDetails(route, document.referrer);
   if (routeDetails?.match) {
     console.log(routeDetails);
@@ -44,14 +48,14 @@ const main = async () => {
       let tag = document.createElement("meta");
       tag.setAttribute("property", `og:${key}`);
       tag.setAttribute("content", og[key]);
-      
+
       document.querySelector("head").append(tag);
     });
 
     let twitter = {
       card: "summary_large_image",
       domain: "mdb.link",
-      site: "@mongodb",      
+      site: "@mongodb",
       url: `https://mdb.link${route}`,
       title: routeDetails.title,
       description: routeDetails.description,
