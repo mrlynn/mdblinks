@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { H2, H3, Label, Description } from "@leafygreen-ui/typography";
 import Toggle from "@leafygreen-ui/toggle";
 import Button from "@leafygreen-ui/button";
@@ -12,6 +12,9 @@ import IconButton from "@leafygreen-ui/icon-button";
 import { useRealm } from "../providers/Realm";
 import { css } from "@leafygreen-ui/emotion";
 import Config from "../config";
+import Modal from "@leafygreen-ui/modal";
+
+import * as QRCode from "qrcode";
 
 let topbarStyle = css`
   display: grid;
@@ -58,7 +61,10 @@ const otherSectionsStyle = css`
   }
 `
 
-export default function Landings () {
+const qrCodeModalStyle = css`
+text-align: center;
+`
+export default function Landings() {
   const { realmUser } = useRealm();
   let currentUserId = realmUser?.id;
 
@@ -74,20 +80,38 @@ export default function Landings () {
   let [insertModalOpened, setInsertModalOpened] = useState(false);
   let [landings, setLandings] = useState([]);
   let [modalMode, setModalMode] = useState("add");
-  
+
   // New Landing form
-  let [identifier, setIdentifier] = useState("");  
+  let [identifier, setIdentifier] = useState("");
   let [identifierState, setIdentifierState] = useState("none");
   let [title, setTitle] = useState("");
   let [subtitle, setSubtitle] = useState("");
   let [summary, setSummary] = useState("");
   let [ctaLabel, setCtaLabel] = useState("Try MongoDB Now");
   let [ctaLink, setCtaLink] = useState("https://mongodb.com");
-  let [otherSections, setOtherSections] = useState([{title: "Other content", content: ""}]);
-  let [additionalResources, setAdditionalResources] = useState([{title: "", link: ""}, {title: "", link: ""}, {title: "", link: ""}])
+  let [otherSections, setOtherSections] = useState([{ title: "Other content", content: "" }]);
+  let [additionalResources, setAdditionalResources] = useState([{ title: "", link: "" }, { title: "", link: "" }, { title: "", link: "" }])
+
+  let [qrCodeModalOpened, setQrCodeModalOpened] = useState(false);
+  let [qrCodeDestination, setQrCodeDestination] = useState("");
+
+
+  const canvasRef = useRef(null);
+
+
+  const showQrCode = async (route) => {
+    await setQrCodeModalOpened(true);
+    setQrCodeDestination(`landing.mdb.link/${route}`);
+    let destinationUrl = `https://landing.mdb.link/${route}`;
+    let canvas = canvasRef.current;
+    QRCode.toCanvas(canvas, destinationUrl, { width: 480, color: { dark: "#023430" } }, function (error) {
+      if (error) console.error(error);
+    });
+  }
+
 
   const handleNewSection = () => {
-    setOtherSections([...otherSections, {title: "New Section", content: ""}])
+    setOtherSections([...otherSections, { title: "New Section", content: "" }])
   }
 
   const removeSection = (index) => {
@@ -275,6 +299,11 @@ export default function Landings () {
         </form>
       </ConfirmationModal>
 
+      <Modal open={qrCodeModalOpened} setOpen={setQrCodeModalOpened} className={qrCodeModalStyle}>
+        <H3>QR Code for {qrCodeDestination}</H3>
+        <canvas ref={canvasRef} width="300"></canvas>
+      </Modal>
+
       <Table
         data={landings}
         columns={[
@@ -300,6 +329,9 @@ export default function Landings () {
               }
               <IconButton aria-label="Clone" onClick={() => cloneLanding(datum.identifier)}>
                 <Icon glyph="Clone" fill="#023430" />
+              </IconButton>
+              <IconButton darkMode={true} aria-label="QRCode" onClick={() => showQrCode(datum.identifier)}>
+                <Icon glyph="Sweep" />
               </IconButton>
               <IconButton aria-label="Preview" href={`${Config.LANDING.URL}/${datum.identifier}`} target="_blank">
                 <Icon glyph="Link" fill="#023430" />
