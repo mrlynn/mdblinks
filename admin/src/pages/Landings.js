@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import { H2, H3, Label, Description } from "@leafygreen-ui/typography";
 import Toggle from "@leafygreen-ui/toggle";
 import Button from "@leafygreen-ui/button";
@@ -34,7 +34,7 @@ let toggleButtonStyle = css`
 `;
 
 const insertFormStyle = css`
-  input { 
+  input {
     margin-bottom: 20px;
   }
   section {
@@ -62,21 +62,23 @@ export default function Landings () {
   const { realmUser } = useRealm();
   let currentUserId = realmUser?.id;
 
-  useEffect(() => {
-    const fetchLandings = async () => {
-      let result = await realmUser.functions.getAllLandings();
-      setLandings(result);
-    }
-    fetchLandings();
+  const getLandings = useCallback(async () => {
+    if (!realmUser) return;
+    let results = await realmUser.functions.getAllLandings();
+    setLandings(results);
   }, [realmUser]);
+
+  useEffect(() => {
+    getLandings();
+  }, [getLandings]);
 
   let [showMyLandings, setShowMyLandings] = useState(true);
   let [insertModalOpened, setInsertModalOpened] = useState(false);
   let [landings, setLandings] = useState([]);
   let [modalMode, setModalMode] = useState("add");
-  
+
   // New Landing form
-  let [identifier, setIdentifier] = useState("");  
+  let [identifier, setIdentifier] = useState("");
   let [identifierState, setIdentifierState] = useState("none");
   let [title, setTitle] = useState("");
   let [subtitle, setSubtitle] = useState("");
@@ -135,11 +137,12 @@ export default function Landings () {
     setIdentifier(value);
   }
 
-  const saveNewLanding = () => {
+  const saveNewLanding = async () => {
     const ctaButton = {label: ctaLabel, linkTo: ctaLink};
     const landing = { title, subtitle, summary, ctaButton, otherSections, additionalResources, identifier };
-    if (modalMode === "add") realmUser.functions.insertLanding(landing);
-    if (modalMode === "edit") realmUser.functions.updateLanding(landing);
+    if (modalMode === "add") await realmUser.functions.insertLanding(landing);
+    if (modalMode === "edit") await realmUser.functions.updateLanding(landing);
+    await getLandings();
     setInsertModalOpened(false);
     emptyForm();
     setModalMode("add");
@@ -183,6 +186,9 @@ export default function Landings () {
   return(
     <React.Fragment>
       <H2>List of landing pages</H2>
+      <h3>Note: With the new Events landing pages, you shouldn't have the need for one of these.</h3>
+      <h3>The mdb.link landing pages will sunset at the end of the year.</h3>
+      <h3>Please contact Joel if you still use them.</h3>
       <section className={topbarStyle}>
         <div>
           <div className={toggleButtonStyle}>
@@ -201,7 +207,7 @@ export default function Landings () {
           </div>
         </div>
         <div>
-          <Button 
+          <Button
             onClick={() => setInsertModalOpened(true)}
             variant="primary"
             leftGlyph={<Icon glyph="Plus" />}
@@ -210,8 +216,8 @@ export default function Landings () {
           </Button>
         </div>
       </section>
-      
-      <ConfirmationModal 
+
+      <ConfirmationModal
         open={insertModalOpened}
         onCancel={() => setInsertModalOpened(false)}
         title={`${modalMode === "edit" ? "Update" : "Create"} a landing page`}
@@ -250,9 +256,9 @@ export default function Landings () {
                     title={section.title}
                   >
                     <TextInput label="Section Title" value={section.title} onChange={(e) => sectionTitleChange(index, e.target.value)}/>
-                    <TextArea 
-                      label="Summary" 
-                      description="Support for full markdown. Use H3 (### section title) for sub headers." 
+                    <TextArea
+                      label="Summary"
+                      description="Support for full markdown. Use H3 (### section title) for sub headers."
                       value={section.content} onChange={(e) => sectionContentChange(index, e.target.value)}
                     />
                     <Button onClick={() => removeSection(index)} variant="dangerOutline" leftGlyph={<Icon glyph="Trash" />}>Remove Section</Button>
@@ -283,17 +289,19 @@ export default function Landings () {
           <TableHeader label="Actions" />
         ]}
       >
-        {({ datum }) => (
+        {({ datum }) => {
+          if (showMyLandings && currentUserId !== datum.owner) { return null; }
+          else { return (
           <Row key={datum._id}>
             <Cell>{datum.identifier}</Cell>
             <Cell>{datum.title || " "}</Cell>
             <Cell>
-              {currentUserId === datum.owner && 
+              {currentUserId === datum.owner &&
               <IconButton darkMode={true} aria-label="Delete">
                 <Icon glyph="Trash" fill="#aa0000" />
               </IconButton>
               }
-              {currentUserId === datum.owner && 
+              {currentUserId === datum.owner &&
               <IconButton darkMode={false} aria-label="Edit" onClick={() => editLanding(datum.identifier)}>
                 <Icon glyph="Edit" fill="#023430" />
               </IconButton>
@@ -306,7 +314,7 @@ export default function Landings () {
               </IconButton>
             </Cell>
           </Row>
-        )}
+        )}}}
       </Table>
     </React.Fragment>
   )
