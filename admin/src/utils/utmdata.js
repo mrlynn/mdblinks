@@ -10,7 +10,7 @@ const sources = [
 
 const mediums = [
   {value: "print", displayName: "Printed Handouts"},
-  {value: "shownotes", displayName: "Podcast or YouTube Show Notes"},
+  {value: "organic_social", displayName: "Podcast, YouTube, or other Social"},
   {value: "cta", displayName: "Call To Action Link"},
   {value: "newsletter", displayName: "Newsletter"}
 ]
