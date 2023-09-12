@@ -1,10 +1,16 @@
+<?php
+  $url = "https://data.mongodb-api.com/app/landing-mgxlk/endpoint/landing?identifier=" . substr($_SERVER['REQUEST_URI'], 1);
+  $contents = file_get_contents($url);
+  $decoded = json_decode($contents);
+  if($decoded->redirectTo) {
+    header("Location: " . $decoded->redirectTo);
+    die();
+  }
+?>
 <!doctype html>
 <html lang="en">
 <script>
   <?php
-  $url = "https://data.mongodb-api.com/app/landing-mgxlk/endpoint/landing?identifier=" . substr($_SERVER['REQUEST_URI'], 1);
-  $contents = file_get_contents($url);
-  $decoded = json_decode($contents);
   if ($decoded->title) {
     echo "window.landingData = " . $contents;
   }

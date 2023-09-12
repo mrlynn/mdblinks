@@ -164,6 +164,8 @@ export default function Landing() {
     const getLanding = async () => {
       let landing = await fetch(`https://data.mongodb-api.com/app/landing-mgxlk/endpoint/landing?identifier=${params.identifier}`).then(resp => resp.json());
       setLandingPageData(landing);
+      debugger;
+      if (landing.redirectTo) window.location.href = landing.redirectTo;
     }
     if (window.landingData) {
       setLandingPageData(window.landingData);
