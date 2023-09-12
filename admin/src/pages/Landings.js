@@ -210,9 +210,9 @@ export default function Landings() {
   return(
     <React.Fragment>
       <H2>List of landing pages</H2>
-      <h3>Note: With the new Events landing pages, you shouldn't have the need for one of these.</h3>
-      <h3>The mdb.link landing pages will sunset at the end of the year.</h3>
-      <h3>Please contact Joel if you still use them.</h3>
+      <H3>Note: With the new Events landing pages, you shouldn't have the need for these for events.</H3>
+      
+
       <section className={topbarStyle}>
         <div>
           <div className={toggleButtonStyle}>
