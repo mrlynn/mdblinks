@@ -54,7 +54,7 @@
     "@leafygreen-ui/tokens": "^2.0.1",
     "@leafygreen-ui/tooltip": "^9.1.6",
     "@leafygreen-ui/typography": "^16.1.0",
-    "@mongodb-js/charts-embed-dom": "^2.2.0",
+    "@mongodb-js/charts-embed-dom": "^3.2.1",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.11.47",
     "@types/react": "^17.0.0",
@@ -72,8 +72,8 @@
     "react-error-overlay": "6.0.9"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
